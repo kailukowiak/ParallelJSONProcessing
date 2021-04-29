@@ -8,25 +8,24 @@ using ProgressMeter
 using AWSS3
 using AWS
 using FilePathsBase
-
+using Distributed
 ## AWS Setup
 aws = global_aws_config(; region="us-east-2")
 p = S3Path("s3://lukowiak-bucket/parsedata/",  config=global_aws_config())
 file_list = readdir(p)
 println(file_list)
-
+##
 function download_execute(s3path, filename)
     run(`aws s3 cp $s3path ./tmpdir/`)
-    json2csv("tmpdir/$filename")
+    json2csv("tmpdir/$filename", filename)
     rm("tmpdir/$filename")
     
 end
 
-download_execute("s3://lukowiak-bucket/parsedata/$(file_list[5])", file_list[5])
 # file = joinpath(p, "file1.json")
 # s3_get_file(aws, "lukowiak-bucket", "parsedata", "file1.csv")
 ## parsing
-function json2csv(json_path)
+function json2csv(json_path, filename)
     file = open(json_path) do f
         split(read(f, String), "\n")
     end
@@ -44,9 +43,15 @@ function json2csv(json_path)
     end
 
     df = vcat(df_list...)
-    csv_name = split(json_path, ".json")[1] * ".csv"
+    csv_name = filename # split(json_path, ".json")[1] * ".csv"
     # CSV.write(csv_name, df)
-    s3_put(aws, "lukowiak-bucket", "parsedata/$csv_name", df)
+    s3path = S3Path("s3://lukowiak-bucket/parsedata_csv/$csv_name",  config=global_aws_config())
+    # s3_put(aws, "lukowiak-bucket", "parsedata/$csv_name", df)
+    CSV.write(s3path, df)
+end
+
+for i ∈ 1:length(file_list)
+    download_execute("s3://lukowiak-bucket/parsedata/$(file_list[i])", file_list[i])
 end
 
 json2csv("data/file1.json")
