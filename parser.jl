@@ -1,13 +1,32 @@
 ## Libs
-
 using Distributed
-nprocs = 4
-proc_ids = addprocs(nprocs)
+using ClusterManagers
+OnCluster = true # set to false if executed on local machine
+addWorkers = true
+println("OnCluster = $(OnCluster)")
+
+# Current number of workers
+# --------------------------
+currentWorkers = nworkers()
+println("Initial number of workers = $(currentWorkers)")
+
+# I want to have maxNumberWorkers workers running
+# -------------------------------------------------
+maxNumberWorkers = 4
+if addWorkers == true
+	if OnCluster == true
+	# if using SGE instead of slurm:
+	# ClusterManagers.addprocs_sge(maxNumberWorkers)
+	  addprocs(SlurmManager(maxNumberWorkers))
+	else
+	  addprocs(maxNumberWorkers)
+	end
+end
+
 @everywhere import Pkg
 @everywhere Pkg.activate(".")
 @everywhere Pkg.instantiate()
 @everywhere begin
-
     using Revise
     using DataFrames
     using Distributed
@@ -42,7 +61,10 @@ end
     file = open(json_path) do f
         split(read(f, String), "\n")
     end
-    df = DataFrame(first_name=String[], last_name=String[], occupation=String[], thread_id = Int[])
+    df = DataFrame(first_name=String[], 
+        last_name=String[], 
+        occupation=String[], 
+        thread_id=Int[])
 
     df_list = Vector{DataFrame}()
     for t = 1:nthreads()
@@ -66,7 +88,7 @@ end
     CSV.write(s3path, df)
 end
 
-download_execute("s3://lukowiak-bucket/parsedata/file1.json")
+# download_execute("s3://lukowiak-bucket/parsedata/file1.json")
 
 # for file ∈ file_list
 #     download_execute("s3://lukowiak-bucket/parsedata/$file")
