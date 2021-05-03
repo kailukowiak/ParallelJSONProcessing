@@ -1,6 +1,6 @@
 ## Libs
 using Distributed
-using ClusterManager
+using ClusterManagers
 OnCluster = true # set to false if executed on local machine
 addWorkers = true
 println("OnCluster = $(OnCluster)")
