@@ -13,7 +13,7 @@ println("Initial number of workers = $(currentWorkers)")
 
 # I want to have maxNumberWorkers workers running
 # -------------------------------------------------
-maxNumberWorkers = 3
+maxNumberWorkers = 6
 if addWorkers == true
 	if OnCluster == true
 	# if using SGE instead of slurm:
@@ -87,7 +87,7 @@ end
     df[!, :computer] .= gethostname()
     csv_name = split(filename, ".json")[1] * ".csv"  # split(json_path, ".json")[1] * ".csv"
     # CSV.write(csv_name, df)
-    s3path = S3Path("s3://lukowiak-bucket/parsedata_csv/$csv_name",  config=global_aws_config())
+    s3path = S3Path("s3://lukowiak-bucket/parsedata_csv/$csv_name",  config=aws)
     # s3_put(aws, "lukowiak-bucket", "parsedata/$csv_name", df) 
     CSV.write(s3path, df)
 end
