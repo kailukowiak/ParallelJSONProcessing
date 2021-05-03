@@ -1,9 +1,10 @@
 ## Libs
 using Distributed
-using ClusterManagers
+using ClusterManager
 OnCluster = true # set to false if executed on local machine
 addWorkers = true
 println("OnCluster = $(OnCluster)")
+# s3_read_write_resource = arn:aws:s3:::lukowiak-bucket/*
 
 # Current number of workers
 # --------------------------
@@ -12,7 +13,7 @@ println("Initial number of workers = $(currentWorkers)")
 
 # I want to have maxNumberWorkers workers running
 # -------------------------------------------------
-maxNumberWorkers = 4
+maxNumberWorkers = 3
 if addWorkers == true
 	if OnCluster == true
 	# if using SGE instead of slurm:
