@@ -29,6 +29,8 @@ end
 @everywhere Pkg.instantiate()
 @everywhere begin
     using Revise
+    includet("secrets.jl")
+    import .Secrets as sc
     using DataFrames
     using Distributed
     using JSON
@@ -41,7 +43,8 @@ end
     using ClusterManagers
 end
 ## AWS Setup
-@everywhere aws = global_aws_config(; region="us-east-2")
+@everywhere aws_cred = AWSCredentials(sc.access_key_id, sc.secret_key)
+@everywhere aws = global_aws_config(; region="us-east-2", creds=aws_cred)
 p = S3Path("s3://lukowiak-bucket/parsedata/",  config=aws)
 file_list = readdir(p)
 println(file_list)
