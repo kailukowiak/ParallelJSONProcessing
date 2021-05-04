@@ -1,5 +1,5 @@
 # pcluster create parallel-test
-# cluster ssh parallel-test -i ~/.ssh/cluster-key-pair    
+# pcluster ssh parallel-test -i ~/.ssh/cluster-key-pair    
 # ssh-keygen -t ed25519 -C "kailukowiak@gmail.com"
 echo "Downloading Julia-1.6.1"
 wget https://julialang-s3.julialang.org/bin/linux/x64/1.6/julia-1.6.1-linux-x86_64.tar.gz
