@@ -13,7 +13,7 @@ println("Initial number of workers = $(currentWorkers)")
 
 # I want to have maxNumberWorkers workers running
 # -------------------------------------------------
-maxNumberWorkers = 6
+maxNumberWorkers = 10
 if addWorkers == true
 	if OnCluster == true
 	# if using SGE instead of slurm:
