@@ -52,7 +52,7 @@ println(file_list)
     run(`aws s3 cp $s3path ./tmpdir$(myid())/`)
     json2csv("tmpdir$(myid())/$filename", filename)
     rm("tmpdir$(myid())/$filename")
-    
+
 end
 
 # file = joinpath(p, "file1.json")
