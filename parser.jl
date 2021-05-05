@@ -13,7 +13,7 @@ println("Initial number of workers = $(currentWorkers)")
 
 # I want to have maxNumberWorkers workers running
 # -------------------------------------------------
-maxNumberWorkers = 3
+maxNumberWorkers = 10
 if addWorkers == true
 	if OnCluster == true
 	# if using SGE instead of slurm:
@@ -29,6 +29,8 @@ end
 @everywhere Pkg.instantiate()
 @everywhere begin
     using Revise
+    includet("secrets.jl")
+    import .Secrets as sc
     using DataFrames
     using Distributed
     using JSON
@@ -41,7 +43,8 @@ end
     using ClusterManagers
 end
 ## AWS Setup
-@everywhere aws = global_aws_config(; region="us-east-2")
+@everywhere aws_cred = AWSCredentials(sc.access_key_id, sc.secret_key)
+@everywhere aws = global_aws_config(; region="us-east-2", creds=aws_cred)
 p = S3Path("s3://lukowiak-bucket/parsedata/",  config=aws)
 file_list = readdir(p)
 println(file_list)
@@ -84,7 +87,7 @@ end
     df[!, :computer] .= gethostname()
     csv_name = split(filename, ".json")[1] * ".csv"  # split(json_path, ".json")[1] * ".csv"
     # CSV.write(csv_name, df)
-    s3path = S3Path("s3://lukowiak-bucket/parsedata_csv/$csv_name",  config=global_aws_config())
+    s3path = S3Path("s3://lukowiak-bucket/parsedata_csv/$csv_name",  config=aws)
     # s3_put(aws, "lukowiak-bucket", "parsedata/$csv_name", df) 
     CSV.write(s3path, df)
 end
