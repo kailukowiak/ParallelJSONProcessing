@@ -1,6 +1,6 @@
-# pcluster create parallel-test
-# pcluster ssh parallel-test -i ~/.ssh/cluster-key-pair    
-# ssh-keygen -t ed25519 -C "kailukowiak@gmail.com"
+pcluster create para-parse
+pcluster ssh para-parse -i ~/.ssh/cluster-key-pair    
+ssh-keygen -t ed25519 -C "kailukowiak@gmail.com"
 echo "Downloading Julia-1.6.1"
 wget https://julialang-s3.julialang.org/bin/linux/x64/1.6/julia-1.6.1-linux-x86_64.tar.gz
 echo "Creating directory/apps/julia-1.6.1"
@@ -12,7 +12,7 @@ sudo ln -s ~/apps/julia-1.6.1/bin/julia /usr/local/bin
 echo "Cleaning"
 rm julia-1.6.1-linux-x86_64.tar.gz
 echo "Setting threads"
-export JULIA_NUM_THREADS=2 # TODO Change this
+export JULIA_NUM_THREADS=4 # TODO Change this
 source .bashrc
 
 echo "Downloading files"
